@@ -1,6 +1,9 @@
 import 'dart:convert' show jsonDecode;
 
 import 'package:flutter/material.dart';
+import 'package:mingle/screens/dates/user-dates-page.dart';
+import 'package:mingle/screens/matches/matches-page.dart';
+import 'package:mingle/screens/profile/user-profile-page.dart';
 // import 'package:mingle/backend-client.dart' show BackendClient;
 import 'package:mingle/styles/colors.dart';
 import 'package:mingle/screens/explore/explore-page.dart';
@@ -20,6 +23,9 @@ class _NavBarState extends State<NavBar> {
 
   List<Widget> _pages = [
     ExplorePage(),
+    MatchesPage(),
+    UserDatesPage(),
+    UserProfilePage(),
   ];
 
   // @override
@@ -57,7 +63,6 @@ class _NavBarState extends State<NavBar> {
           type: BottomNavigationBarType.fixed,
           onTap: navController.changeTabIndex,
           items: const [
-            // BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
               icon: Icon(Icons.search), 
               label: 'Search'),

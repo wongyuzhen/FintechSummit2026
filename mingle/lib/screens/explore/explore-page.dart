@@ -18,17 +18,17 @@ class _ExplorePageState extends State<ExplorePage> {
     {
       "name": "Alex Tan",
       "description": "Fashion enthusiast who loves sustainable style.",
-      "image": "https://via.placeholder.com/150",
+      "image": "https://icon-library.com/images/profile-icon/profile-icon-14.jpg",
     },
     {
       "name": "Jamie Lim",
       "description": "Minimalist. Coffee addict. Thrift lover.",
-      "image": "https://via.placeholder.com/150",
+      "image": "https://icon-library.com/images/profile-icon/profile-icon-14.jpg",
     },
     {
       "name": "Chris Wong",
       "description": "Streetwear collector & reseller.",
-      "image": "https://via.placeholder.com/150",
+      "image": "https://icon-library.com/images/profile-icon/profile-icon-14.jpg",
     },
   ];
 
@@ -48,10 +48,13 @@ class _ExplorePageState extends State<ExplorePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             /// Profile Picture
-            CircleAvatar(
-              radius: 70,
-              backgroundImage: NetworkImage(
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
                 profiles[currentIndex]["image"]!,
+                width: 375,
+                height: 375,
+                fit: BoxFit.cover,
               ),
             ),
 
@@ -61,8 +64,8 @@ class _ExplorePageState extends State<ExplorePage> {
             Text(
               profiles[currentIndex]["name"]!,
               style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+                fontSize: 40, 
+                fontWeight: FontWeight.bold
               ),
             ),
 
@@ -75,8 +78,8 @@ class _ExplorePageState extends State<ExplorePage> {
                 profiles[currentIndex]["description"]!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: grey,
+                  fontSize: 22, 
+                  color: black
                 ),
               ),
             ),

@@ -6,8 +6,6 @@ class NavController extends GetxController {
 
   // Optional: update index
   void changeTabIndex(int index) {
-    if (index == 2) {
         selectedIndex.value = index;  // Normal tab switching
-    }
   }
 }
