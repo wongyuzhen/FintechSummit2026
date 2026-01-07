@@ -9,22 +9,24 @@ import asyncio
 router = APIRouter()
 
 @router.post("/login")
-async def getAuthRequest(request: Request):
-    username, password_hashed, error = await read_json(request, ["username", "password"])
+async def loginRequest(request: Request):
+    name, password, error = await read_json(request, ["name", "password"])
     if error:
         return format_error_msg(error)
     
-    return getAuth(username, password_hashed)
+    return getAuth(name, password)
 
-def getAuth(username, password_hashed):
-    res = find_one_collection({"username": username, "password": password_hashed}, "authentication")
+def login(name, password):
+    res = find_one_collection({"name": name, "password": password}, "users")
     if res == None:
+        print("Password doesnt match or no user found")
         return format_error_msg("Password doesnt match or no user found")
     else:
+        print("Login Successful")
         return format_success_msg({"access": True})
 
-@router.post("/signup")
-async def signupRequest(request: Request):
+@router.post("/register")
+async def registerRequest(request: Request):
     name, email, photo, description, dates, password, public_key, private_key, error = await read_json(request, 
         [
         "name", "email", "photo", "description", "dates", "password",
@@ -37,7 +39,7 @@ async def signupRequest(request: Request):
                 public_key, private_key)
     return res
 
-def signup(name, email, photo, description, dates, password,
+def register(name, email, photo, description, dates, password,
                 public_key, private_key):
     usr_jsn =  {"name": name,
                 "email": email,
@@ -148,4 +150,5 @@ async def forgotPassword(request: Request):
     except Exception as e:
         return format_error_msg(str(e))
 
-signup("1", "2", "3", "4", "5", "6", "7", "8")
+# register("1", "2", "3", "4", "5", "6", "7", "8")
+login("1", "6")
