@@ -45,3 +45,9 @@ def generate_unique_6_digit():
     hash_object = hashlib.sha256(unique_id.encode())
     hex_dig = hash_object.hexdigest()
     return int(hex_dig, 16) % 900000 + 100000
+
+def generate_unique_8_digit():
+    unique_id = str(uuid.uuid4())
+    hash_object = hashlib.sha256(unique_id.encode())
+    hex_dig = hash_object.hexdigest()
+    return int(hex_dig, 16) % 90000000 + 10000000

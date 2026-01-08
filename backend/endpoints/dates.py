@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from database.database import find_one_collection, add_to_collection, update_to_collection, delete_from_collection, remove_field_from_collection
-from misc.misc import read_json, format_error_msg, format_success_msg, generate_unique_6_digit
+from misc.misc import read_json, format_error_msg, format_success_msg, generate_unique_6_digit, generate_unique_8_digit
 import hashlib
 import random
 import string
@@ -15,22 +15,13 @@ async def createDateRequest(request: Request):
     stake,
     restaurant_email,
     deadline,
-    secA,
-    secB,
-    condA,
-    condB, 
     error = await read_json(request, [
         "a_email",
         "b_email",
         "stake",
         "restaurant_email",
-        "deadline",
-        "secA",
-        "secB",
-        "condA",
-        "condB"])
+        "deadline"])
 
-    date_id = str(generate_unique_6_digit())
     if error:
         return format_error_msg(error)
     return createDate(date_id,
@@ -38,11 +29,7 @@ async def createDateRequest(request: Request):
         b_email,
         stake,
         restaurant_email,
-        deadline,
-        secA,
-        secB,
-        condA,
-        condB)
+        deadline)
 
 def createDate(
     date_id,
@@ -50,11 +37,7 @@ def createDate(
     b_email,
     stake,
     restaurant_email,
-    deadline,
-    secA,
-    secB,
-    condA,
-    condB):
+    deadline):
     personA = find_one_collection({"email": a_email}, "users")
     personB = find_one_collection({"email": b_email}, "users")
     restaurant = find_one_collection({"email": restaurant_email}, "restaurants")
@@ -62,6 +45,16 @@ def createDate(
     a_pubkey = personA["pubkey"]
     b_pubkey = personB["pubkey"]
     restaurant_pubkey = restaurant["pubkey"]
+
+    date_id = str(generate_unique_8_digit())
+    secA = str(generate_unique_6_digit())
+    secB = str(generate_unique_6_digit())
+
+    condA = hashlib.sha256(secA.encode('utf-8')).hexdigest()
+    condB = hashlib.sha256(secB.encode('utf-8')).hexdigest()
+
+    encSecA = encrypt_with_xrp_pubkey(a_pubkey, secA.encode('utf-8'))
+    encSecB = encrypt_with_xrp_pubkey(b_pubkey, secB.encode('utf-8'))
 
     date_jsn =  {
         "date_id": date_id,
@@ -73,16 +66,16 @@ def createDate(
         "restaurant_pubkey": restaurant_pubkey,
         "restaurant_email": restaurant_email,
         "deadline": deadline,
-        "secA": secA,
-        "secB": secB,
+        "secA": encSecA,
+        "secB": encSecB,
         "condA": condA,
         "condB": condB,
         "seqA": -1,
         "seqB": -1, 
-        "isCompleted": False 
+        "iconfirmd": False 
     }
     date = add_to_collection(date_jsn, "dates")
-    return format_success_msg({"access": True})
+    return format_success_msg({"access": True, "date_id": date_id})
 
 @router.post("/getDate")
 async def getDateRequest(request: Request):
@@ -111,6 +104,7 @@ async def acceptDateRequest(request: Request):
         return format_error_msg(error)
     return acceptDate(person_email, date_id, seq)
 
+# Request seq from blockchain script that was run in frontend
 def acceptDate(person_email, date_id, seq):
     date = find_one_collection({"date_id": date_id}, "dates")
 
@@ -144,14 +138,14 @@ def rejectDate(date_id):
     delete_from_collection({"date_id": date_id}, "dates")
     return format_success_msg({"message": "Date rejected and deleted successfully"})
 
-@router.post("/completeDate")
-async def completeDateRequest(request: Request):
+@router.post("confirmDate")
+async def confirmDateRequest(request: Request):
     date_id, error = await read_json(request, ["date_id"])
     if error:
         return format_error_msg(error)
-    return completeDate(date_id)
+    return confirmDate(date_id)
 
-def completeDate(date_id):
+def confirmDate(date_id):
     update_to_collection(
         {"date_id": date_id},
         {
@@ -159,6 +153,29 @@ def completeDate(date_id):
         },
         "dates")
     return format_success_msg({})
+
+def arrive(pubkey, date_id):
+    date = find_one_collection({"date_id": date_id}, "dates")
+
+    if pubkey == date["a_pubkey"]:
+        update_to_collection(
+            {"date_id": date_id},
+            {
+                "iconfirmd": True,
+            },
+            "dates")
+        return format_success_msg({})
+    elif pubkey == date["b_pubkey"]:
+        update_to_collection(
+            {"date_id": date_id},
+            {
+                "bconfirmd": True,
+            },
+            "dates")
+        return format_success_msg({})
+    else:
+        return format_error_msg("No date found with this ID")
+    
 
 # Testing
 
@@ -177,5 +194,5 @@ print(getDate(temp))
 print(acceptDate("abc@mail.com", temp, 5))
 print(acceptDate("1234@m.com", temp, 5678))
 # print(rejectDate(temp))
-print(completeDate(temp))
+printconfirmDate(temp))
 print(getDate(temp))
