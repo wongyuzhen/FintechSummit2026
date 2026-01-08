@@ -252,8 +252,8 @@ class _RegisterUploadDPState extends State<RegisterUploadDP> {
                 children: [
                   Expanded(
                     child: mingleButton(
-                      text: isLoading ? "Registering..." : "Confirm",
-                      onPressed: isLoading ? null : () async {
+                      text: isLoading ? "Registering..." : "Sign Up",
+                      onPressed: isLoading ? null : () {
                         handleSignUp();
                         if (file == null) {
                           Get.snackbar(
