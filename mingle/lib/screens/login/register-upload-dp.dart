@@ -224,7 +224,7 @@ class _RegisterUploadDPState extends State<RegisterUploadDP> {
                 children: [
                   Expanded(
                     child: mingleButton(
-                      text: isLoading ? "Registering..." : "Confirm",
+                      text: isLoading ? "Registering..." : "Sign Up",
                       onPressed: isLoading ? null : () {
                         handleSignUp();
                       },

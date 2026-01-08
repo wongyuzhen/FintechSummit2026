@@ -90,7 +90,7 @@ class _RegisterState extends State<Register> {
                 children: [
                   Expanded(
                     child: mingleButton(
-                      text: "Sign Up",
+                      text: "Next",
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           // Pass user data to RegisterUploadDP
