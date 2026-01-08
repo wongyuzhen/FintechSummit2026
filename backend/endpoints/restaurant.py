@@ -97,7 +97,7 @@ def getDates(email):
     else:
         return format_error_msg("No restaurant found with this email")
 
-print(register("restaurant@123", "restaurant", "key", "photo", "description", [1,2,3], "6"))
-print(login("restaurant@123", "6"))
-print(getProfile("restaurant@123"))
-print(getDates("restaurant@123"))
+# print(register("restaurant@123", "restaurant", "key", "photo", "description", [1,2,3], "6"))
+# print(login("restaurant@123", "6"))
+# print(getProfile("restaurant@123"))
+# print(getDates("restaurant@123"))
