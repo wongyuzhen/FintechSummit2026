@@ -3,7 +3,7 @@ from crypto.wallet import create_and_store_test_wallet, get_wallet_balance, recr
 
 if __name__ == "__main__":
     #print("Creating Alice wallet...")
-    #alice_wallet = create_and_store_test_wallet("Alice", password="Alice")
+    alice_wallet = create_and_store_test_wallet("Alice", password="Alice")
     #print("Done!\n")
     
     # Example: Recreate Alice's wallet
