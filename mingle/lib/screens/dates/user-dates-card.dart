@@ -76,6 +76,11 @@ class _UserDatesCardState extends State<UserDatesCard> {
               style: const TextStyle(fontSize: 16),
             ),
 
+            Text(
+              "Stake: ${widget.match["stake"] ?? "Unknown"}",
+              style: const TextStyle(fontSize: 16),
+            ),
+
             const SizedBox(height: 16),
 
             /// Accept / Decline Buttons

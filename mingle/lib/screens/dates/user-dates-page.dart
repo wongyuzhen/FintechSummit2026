@@ -22,6 +22,7 @@ class UserDatesPage extends StatelessWidget {
       "dateTime": "2026-01-07T18:30:00",
       "matchId": "match_001",
       "restaurant": "The Fancy Fork",
+      "stake": "1 XRP"
     },
     {
       "a": {
@@ -37,6 +38,7 @@ class UserDatesPage extends StatelessWidget {
       "dateTime": "2026-01-07T18:30:00",
       "matchId": "match_001",
       "restaurant": "The Fancy Fork", 
+      "stake": "2 XRP"
     },
     {
       "a": {
@@ -52,6 +54,7 @@ class UserDatesPage extends StatelessWidget {
       "dateTime": "2026-01-07T18:30:00",
       "matchId": "match_001",
       "restaurant": "The Fancy Fork", 
+      "stake": "10 XRP"
     },
   ];
 
