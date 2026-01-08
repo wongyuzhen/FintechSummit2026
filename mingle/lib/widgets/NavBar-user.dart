@@ -1,6 +1,7 @@
 import 'dart:convert' show jsonDecode;
 
 import 'package:flutter/material.dart';
+import 'package:mingle/screens/dates/restaurant-dates-page.dart';
 import 'package:mingle/screens/dates/user-dates-page.dart';
 import 'package:mingle/screens/matches/matches-page.dart';
 import 'package:mingle/screens/profile/user-profile-page.dart';
@@ -10,14 +11,14 @@ import 'package:mingle/screens/explore/explore-page.dart';
 import 'package:mingle/NavController.dart';
 import 'package:get/get.dart';
 
-class NavBar extends StatefulWidget {
-  NavBar({super.key});
+class NavBarUser extends StatefulWidget {
+  NavBarUser({super.key});
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<NavBarUser> createState() => _NavBarState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _NavBarState extends State<NavBarUser> {
   final NavController navController = Get.find();
   Map<String, dynamic> profile = Map();
 
@@ -72,7 +73,7 @@ class _NavBarState extends State<NavBar> {
             ),
             BottomNavigationBarItem(
               key: Key("create-item"),
-              icon: Icon(Icons.sell),
+              icon: Icon(Icons.favorite),
               label: 'Sell',
             ),
             BottomNavigationBarItem(
