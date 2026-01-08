@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from database.database import find_one_collection, add_to_collection, update_to_collection, delete_from_collection
+from database.database import find_one_collection, add_to_collection, update_to_collection, delete_from_collection, remove_field_from_collection
 from misc.misc import read_json, format_error_msg, format_success_msg, generate_unique_6_digit
 import hashlib
 import random
@@ -10,82 +10,75 @@ router = APIRouter()
 
 @router.post("/createDate")
 async def createDateRequest(request: Request):
-    a_pubkey,
-    b_pubkey,
-    a_id,
-    b_id,
+    a_email,
+    b_email,
     stake,
-    restaurant_pubkey,
+    restaurant_email,
     deadline,
     secA,
     secB,
     condA,
-    condB,
-    seqA,
-    seqB, 
+    condB, 
     error = await read_json(request, [
-        "a_pubkey",
-        "b_pubkey",
-        "a_id",
-        "b_id",
+        "a_email",
+        "b_email",
         "stake",
-        "restaurant_pubkey",
+        "restaurant_email",
         "deadline",
         "secA",
         "secB",
         "condA",
-        "condB",
-        "seqA",
-        "seqB"])
+        "condB"])
 
     date_id = str(generate_unique_6_digit())
     if error:
         return format_error_msg(error)
     return createDate(date_id,
-        a_pubkey,
-        b_pubkey,
-        a_id,
-        b_id,
+        a_email,
+        b_email,
         stake,
-        restaurant_pubkey,
+        restaurant_email,
         deadline,
         secA,
         secB,
         condA,
-        condB,
-        seqA,
-        seqB)
+        condB)
 
 def createDate(
     date_id,
-    a_pubkey,
-    b_pubkey,
-    a_id,
-    b_id,
+    a_email,
+    b_email,
     stake,
-    restaurant_pubkey,
+    restaurant_email,
     deadline,
     secA,
     secB,
     condA,
-    condB,
-    seqA,
-    seqB):
+    condB):
+    personA = find_one_collection({"email": a_email}, "users")
+    personB = find_one_collection({"email": b_email}, "users")
+    restaurant = find_one_collection({"email": restaurant_email}, "restaurants")
+
+    a_pubkey = personA["pubkey"]
+    b_pubkey = personB["pubkey"]
+    restaurant_pubkey = restaurant["pubkey"]
+
     date_jsn =  {
         "date_id": date_id,
         "a_pubkey": a_pubkey,
         "b_pubkey": b_pubkey,
-        "a_id": a_id,
-        "b_id": b_id,
+        "a_email": a_email,
+        "b_email": b_email,
         "stake": stake,
         "restaurant_pubkey": restaurant_pubkey,
+        "restaurant_email": restaurant_email,
         "deadline": deadline,
         "secA": secA,
         "secB": secB,
         "condA": condA,
         "condB": condB,
-        "seqA": seqA,
-        "seqB": seqB, 
+        "seqA": -1,
+        "seqB": -1, 
         "isCompleted": False 
     }
     date = add_to_collection(date_jsn, "dates")
@@ -93,33 +86,96 @@ def createDate(
 
 @router.post("/getDate")
 async def getDateRequest(request: Request):
-    dateID, error = await read_json(request, ["dateID"])
+    date_id, error = await read_json(request, ["date_id"])
     if error:
         return format_error_msg(error)
-    return getDate(dateID)
+    return getDate(date_id)
 
-def getDate(dateID):
-    res = find_one_collection({"date_id": dateID}, "dates")
-    if res != None:
-        return format_success_msg({"date": res})
+def getDate(date_id):
+    date = find_one_collection({"date_id": date_id}, "dates")
+
+    if date != None:
+        return format_success_msg({"date": date})
     else:
         return format_error_msg("No date found with this ID")
+
+@router.post("/acceptDate")
+async def acceptDateRequest(request: Request):
+    person_email,
+    date_id,
+    seq, error = await read_json(request, [
+        "person_email",
+        "date_id",
+        "seq"])
+    if error:
+        return format_error_msg(error)
+    return acceptDate(person_email, date_id, seq)
+
+def acceptDate(person_email, date_id, seq):
+    date = find_one_collection({"date_id": date_id}, "dates")
+
+    if person_email == date["a_email"]:
+        update_to_collection(
+            {"date_id": date_id},
+            {
+                "seqA": seq,
+            },
+            "dates")
+        return format_success_msg({})
+    elif person_email == date["b_email"]:
+        update_to_collection(
+            {"date_id": date_id},
+            {
+                "seqB": seq,
+            },
+            "dates")
+        return format_success_msg({})
+    else:
+        return format_error_msg("No date found with this ID")
+
+@router.post("/rejectDate")
+async def rejectDateRequest(request: Request):
+    date_id, error = await read_json(request, ["date_id"])
+    if error:
+        return format_error_msg(error)
+    return rejectDate(date_id)
+
+def rejectDate(date_id):
+    delete_from_collection({"date_id": date_id}, "dates")
+    return format_success_msg({"message": "Date rejected and deleted successfully"})
+
+@router.post("/completeDate")
+async def completeDateRequest(request: Request):
+    date_id, error = await read_json(request, ["date_id"])
+    if error:
+        return format_error_msg(error)
+    return completeDate(date_id)
+
+def completeDate(date_id):
+    update_to_collection(
+        {"date_id": date_id},
+        {
+            "isCompleted": True,
+        },
+        "dates")
+    return format_success_msg({})
 
 # Testing
 
 temp = generate_unique_6_digit()
 print(createDate(temp,
-    "a_pubkey",
-    "b_pubkey",
-    "a_id",
-    "b_id",
+    "abc@mail.com",
+    "1234@m.com",
     100,
-    "restaurant_pubkey",
+    "restaurant@123",
     "deadline",
     "secA",
     "secB",
     "condA",
-    "condB",
-    "seqA",
-    "seqB"))
+    "condB"))
+print(getDate(temp))
+print(acceptDate("abc@mail.com", temp, 5))
+print(acceptDate("1234@m.com", temp, 5678))
+# print(rejectDate(temp))
+print(completeDate(temp))
 print(getDate(temp))
