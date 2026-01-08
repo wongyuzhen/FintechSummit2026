@@ -5,7 +5,8 @@ import 'package:mingle/screens/login/login.dart';
 import 'package:mingle/screens/login/login.dart';
 import 'package:get/get.dart';
 import 'package:mingle/styles/colors.dart';
-import 'package:mingle/widgets/NavBar.dart';
+import 'package:mingle/widgets/NavBar-restaurant.dart';
+import 'package:mingle/widgets/NavBar-user.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: secondary),
         scaffoldBackgroundColor: primary,
       ),
-      home: NavBar(),
+      home: Login(),
     );
     
   }
