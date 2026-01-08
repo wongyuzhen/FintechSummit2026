@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from database.database import find_one_collection, add_to_collection, update_to_collection, delete_from_collection
 from misc.misc import read_json, format_error_msg, format_success_msg
+
 import hashlib
 import random
 import string
@@ -25,19 +26,20 @@ def login(email, password):
 
 @router.post("/register")
 async def registerRequest(request: Request):
-    email, name, photo, description, dateIDs, password, error = await read_json(request, 
+    email, name, pubkey, photo, description, dateIDs, password, error = await read_json(request, 
         [
-        "email", "name", "photo", "description", "dateIDs", "password", 
+        "email", "name", "pubkey", "photo", "description", "dateIDs", "password", 
         ]
         )
     if error:
         return format_error_msg(error)
-    res = register(email, name, photo, description, dateIDs, password)
+    res = register(email, name, pubkey, photo, description, dateIDs, password)
     return res
 
-def register(email, name, photo, description, dateIDs, password):
+def register(email, name, pubkey, photo, description, dateIDs, password):
     restaurant_jsn =  {"email": email,
                 "name": name,
+                "pubkey": pubkey,
                 "photo": photo,
                 "description": description,
                 "dateIDs": dateIDs,
@@ -73,6 +75,29 @@ def getProfile(email):
     else:
         return format_error_msg("No user found with this email")
 
-print(register("restaurant@123", "restaurant", "photo", "description", [1,2,3], "6"))
+@router.post("/getDates")
+async def getDates(request: Request):
+    email, error = await read_json(request, 
+        [
+        "email"
+        ]
+        )
+    if error:
+        return format_error_msg(error)
+    res = getDates(email)
+                
+    return res
+
+def getDates(email):
+    res = find_one_collection({"email": email}, "restaurants")
+
+    if res != None:
+        date_ids = res["dateIDs"]
+        return format_success_msg({"date_ids": date_ids})
+    else:
+        return format_error_msg("No restaurant found with this email")
+
+print(register("restaurant@123", "restaurant", "key", "photo", "description", [1,2,3], "6"))
 print(login("restaurant@123", "6"))
 print(getProfile("restaurant@123"))
+print(getDates("restaurant@123"))
