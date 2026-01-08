@@ -3,3 +3,4 @@
 seed
 
 *.pyc
+backend/.env

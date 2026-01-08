@@ -1,26 +1,33 @@
 import 'dart:convert' show jsonDecode;
 
 import 'package:flutter/material.dart';
+import 'package:mingle/screens/dates/restaurant-dates-page.dart';
+import 'package:mingle/screens/dates/user-dates-page.dart';
+import 'package:mingle/screens/matches/matches-page.dart';
+import 'package:mingle/screens/profile/user-profile-page.dart';
 // import 'package:mingle/backend-client.dart' show BackendClient;
 import 'package:mingle/styles/colors.dart';
 import 'package:mingle/screens/explore/explore-page.dart';
 import 'package:mingle/NavController.dart';
 import 'package:get/get.dart';
 
-class NavBar extends StatefulWidget {
-  NavBar({super.key});
+class NavBarUser extends StatefulWidget {
+  NavBarUser({super.key});
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<NavBarUser> createState() => _NavBarState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _NavBarState extends State<NavBarUser> {
   final NavController navController = Get.find();
   Map<String, dynamic> profile = Map();
 
   List<Widget> _pages = [
-          ExplorePage(),
-        ];
+    ExplorePage(),
+    MatchesPage(),
+    UserDatesPage(),
+    UserProfilePage(),
+  ];
 
   // @override
   // void initState() {
@@ -57,18 +64,21 @@ class _NavBarState extends State<NavBar> {
           type: BottomNavigationBarType.fixed,
           onTap: navController.changeTabIndex,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
             BottomNavigationBarItem(
-              key: Key("create-item"),
-              icon: Icon(Icons.sell),
-              label: 'Sell',
-            ),
+              icon: Icon(Icons.search), 
+              label: 'Search'),
             BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble),
               label: 'Chat',
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(
+              key: Key("create-item"),
+              icon: Icon(Icons.favorite),
+              label: 'Sell',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person), 
+              label: 'Profile'),
           ],
         ),
       ),
